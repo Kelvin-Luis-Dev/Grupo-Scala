@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{{ project.title }} — Portfolio Kelvin</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+  <style>
+    /* =========================================
+       CSS DINÂMICO (Específico desta página)
+       ========================================= */
+    :root {
+        /* Define a cor principal baseada no projeto atual */
+        --dynamic-accent: {{ project.color if project.color else '#c69c00' }};
+    }
+
+    body {
+        background-color: #050505;
+    }
+
+    /* Navbar simplificada flutuante */
+    .project-nav {
+        position: absolute; top: 0; left: 0; width: 100%;
+        padding: 30px 5vw;
+        display: flex; justify-content: space-between; align-items: center;
+        z-index: 10;
+    }
+
+    /* --- AJUSTE DA LOGO PEQUENA --- */
+    .project-nav-logo {
+        height: 60px; /* Tamanho controlado para ficar elegante */
+        width: auto;  /* Mantém a proporção */
+        display: block;
+        /* Opcional: Se a logo for preta e o fundo escuro, inverte a cor para branco */
+        /* filter: invert(1); */
+    }
+
+    .btn-back {
+        background: rgba(0,0,0,0.5);
+        border: 1px solid rgba(255,255,255,0.2);
+        color: #fff; padding: 10px 20px; border-radius: 50px;
+        text-decoration: none; transition: 0.3s;
+        backdrop-filter: blur(5px); display: flex; align-items: center; gap: 8px;
+    }
+    .btn-back:hover {
+        background: var(--dynamic-accent);
+        border-color: var(--dynamic-accent);
+        color: #000;
+        box-shadow: 0 0 20px var(--dynamic-accent);
+    }
+
+    /* Hero Section Imersiva */
+    .hero-wrapper {
+        height: 60vh; min-height: 450px;
+        position: relative; display: flex; align-items: flex-end;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .hero-bg {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-size: cover; background-position: center;
+        filter: brightness(0.6); z-index: 1;
+    }
+    .hero-gradient {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(to top, #050505 5%, transparent 100%);
+        z-index: 2;
+    }
+    .hero-data {
+        position: relative; z-index: 3;
+        width: 100%; max-width: 1200px; margin: 0 auto;
+        padding: 0 5vw 60px;
+    }
+
+    /* Títulos e Textos */
+    .category-pill {
+        display: inline-block;
+        background: rgba(0,0,0,0.6);
+        border: 1px solid var(--dynamic-accent);
+        color: var(--dynamic-accent);
+        padding: 5px 15px; border-radius: 4px;
+        font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px;
+        margin-bottom: 20px;
+    }
+    h1.project-title {
+        font-size: 3.5rem; margin: 0 0 10px; color: #fff;
+        text-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    }
+    p.project-subtitle { font-size: 1.5rem; color: #ccc; font-weight: 300; margin: 0; }
+
+    /* Layout do Conteúdo */
+    .content-grid {
+        display: grid; grid-template-columns: 2fr 1fr; gap: 60px;
+        max-width: 1200px; margin: 0 auto; padding: 80px 5vw;
+    }
+
+    .text-content h2 { color: #fff; border-left: 3px solid var(--dynamic-accent); padding-left: 15px; margin-bottom: 20px; }
+    .text-content h3 { color: #ddd; margin-top: 40px; margin-bottom: 15px; }
+    .text-content p { color: #aaa; line-height: 1.8; font-size: 1.1rem; margin-bottom: 20px; }
+
+    /* Sidebar Estilizada */
+    .sidebar-card {
+        background: #0f0f0f;
+        border: 1px solid rgba(255,255,255,0.08);
+        padding: 30px; border-radius: 12px; margin-bottom: 30px;
+    }
+    .sidebar-card h3 { margin-top: 0; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; }
+
+    .tech-tag {
+        display: inline-block; background: rgba(255,255,255,0.05);
+        color: #ccc; padding: 6px 12px; border-radius: 6px;
+        margin: 0 5px 10px 0; font-family: monospace; font-size: 0.9rem;
+        border: 1px solid transparent; transition: 0.3s;
+    }
+    .tech-tag:hover { border-color: var(--dynamic-accent); color: #fff; }
+
+    /* Botões Principais */
+    .btn-action {
+        display: block; width: 100%; text-align: center; padding: 15px;
+        border-radius: 8px; text-decoration: none; font-weight: bold;
+        margin-bottom: 15px; transition: all 0.3s ease;
+    }
+    .btn-filled {
+        background: var(--dynamic-accent); color: #000;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    .btn-filled:hover { filter: brightness(1.1); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+
+    .btn-outline {
+        background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff;
+    }
+    .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: #fff; }
+
+    @media (max-width: 768px) {
+        .content-grid { grid-template-columns: 1fr; }
+        h1.project-title { font-size: 2.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="project-nav">
+    <a href="/">
+      <img src="{{ url_for('static', filename='images/logopretoebranco.png') }}" alt="Grupo Scala" class="project-nav-logo">
+    </a>
+
+    <a href="/" class="btn-back"><i class="fas fa-arrow-left"></i> Voltar</a>
+  </nav>
+
+  <main>
+    <header class="hero-wrapper">
+      <div class="hero-bg" style="background-image: url('{{ url_for('static', filename='images/' + project.img) }}')"></div>
+      <div class="hero-gradient"></div>
+
+      <div class="hero-data">
+        <span class="category-pill">{{ project.category }}</span>
+        <h1 class="project-title">{{ project.title }}</h1>
+        <p class="project-subtitle">{{ project.subtitle }}</p>
+      </div>
+    </header>
+
+    <section class="content-grid">
+
+      <div class="text-content">
+        <h2>Sobre o Projeto</h2>
+        <p>{{ project.description }}</p>
+
+        <h3><i class="fas fa-flag"></i> O Desafio</h3>
+        <p>{{ project.challenge if project.challenge else "Informações sobre o desafio técnico indisponíveis." }}</p>
+      </div>
+
+      <aside>
+        <div class="sidebar-card">
+          <h3>Tech Stack</h3>
+          <div>
+            {% for tech in project.tags %}
+              <span class="tech-tag">{{ tech }}</span>
+            {% else %}
+              <span class="tech-tag">Dev</span>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="sidebar-card">
+          <h3>Links do Projeto</h3>
+
+          {% if project.github_link %}
+          <a href="{{ project.github_link }}" target="_blank" class="btn-action btn-filled">
+            <i class="fab fa-github"></i> Ver Código
+          </a>
+          {% endif %}
+
+          {% if project.demo_link %}
+          <a href="{{ project.demo_link }}" target="_blank" class="btn-action btn-outline">
+            <i class="fas fa-external-link-alt"></i> Acessar Online
+          </a>
+          {% endif %}
+        </div>
+      </aside>
+
+    </section>
+  </main>
+
+  <footer style="text-align: center; padding: 40px; color: #444; border-top: 1px solid #111;">
+    <p>© 2025 Kelvin Luis • Desenvolvido com Python</p>
+  </footer>
+
+</body>
+</html>

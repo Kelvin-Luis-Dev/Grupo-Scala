@@ -1,0 +1,997 @@
+/* ==========================================================================
+   1. VARIÁVEIS, RESET & BASE
+   (Configurações de cores e comportamento padrão do site)
+   ========================================================================== */
+:root {
+  /* --- CORES DO TEMA --- */
+  --bg: #050505;       /* Preto quase absoluto (Fundo principal) */
+  --card: #0f0f0f;     /* Cinza muito escuro (Fundo dos cards) */
+  --muted: #888;       /* Cinza médio (Textos secundários) */
+
+  /* --- SUAS CORES DE MARCA --- */
+  --accent: #fab91f;   /* Amarelo Ouro (Cor principal de destaque) */
+  --accent-2: #c0661a; /* Laranja Bronze (Cor usada no hover/interação) */
+}
+
+* {
+  box-sizing: border-box; /* Garante que bordas e padding não aumentem o tamanho total dos elementos */
+}
+
+html, body {
+  min-height: 100%; /* O site ocupa pelo menos 100% da tela */
+  height: auto;     /* Deixa o site crescer conforme o conteúdo (evita cortes no scroll) */
+  margin: 0;        /* Remove margens padrão do navegador */
+  font-family: 'Inter', system-ui, sans-serif; /* Fonte moderna e limpa */
+  color: #fff;      /* Cor padrão do texto (Branco) */
+  letter-spacing: 0.2px; /* Leve espaçamento entre letras para leitura */
+  overflow-x: hidden; /* Impede que apareça barra de rolagem lateral indesejada */
+  position: relative;
+
+  /* --- FUNDO COM TEXTURA --- */
+  background-color: var(--bg);
+  /* Cria manchas de luz sutis no fundo para não ficar um preto chapado */
+  background-image:
+    radial-gradient(circle at 80% 10%, rgba(250, 185, 31, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 20% 90%, rgba(250, 185, 31, 0.03) 0%, transparent 40%);
+  background-attachment: fixed; /* O fundo fica parado enquanto você rola a página */
+  background-size: cover;
+}
+
+a {
+  color: inherit; /* Links herdam a cor do texto pai */
+  text-decoration: none; /* Remove o sublinhado padrão dos links */
+}
+
+/* ==========================================================================
+   2. ANIMAÇÕES GLOBAIS
+   (Efeitos de movimento reutilizáveis)
+   ========================================================================== */
+/* Pulso amarelo para bolinhas de status */
+@keyframes pulse-green {
+  0% { box-shadow: 0 0 0 0 rgba(250, 185, 31, 0.7); }
+  70% { box-shadow: 0 0 0 6px rgba(250, 185, 31, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(250, 185, 31, 0); }
+}
+
+/* Efeito de "respiração" leve para imagens */
+@keyframes subtle-breathe {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.015); } /* Aumenta muito pouco */
+}
+
+/* Animação da Aura atrás da logo */
+@keyframes pulse-energy {
+  0% { opacity: 0.8; transform: translate(-50%, -55%) scale(0.95); }
+  100% { opacity: 1; transform: translate(-50%, -55%) scale(1.05); }
+}
+
+/* Flutuação (Sobe e desce suavemente) */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(2deg); } /* Sobe 15px e gira levemente */
+}
+
+/* Letreiro Digital (Move o texto infinitamente para a esquerda) */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ==========================================================================
+   3. NAVEGAÇÃO (NAVBAR)
+   ========================================================================== */
+.nav {
+  position: fixed; /* Fixa no topo da tela */
+  top: 25px;       /* Distância do topo */
+  left: 50%;       /* Centraliza horizontalmente... */
+  transform: translateX(-50%); /* ...ajustando o eixo X */
+  z-index: 1000;   /* Garante que fique na frente de tudo */
+  width: auto;
+  min-width: 400px;
+
+  /* Efeito de Vidro Fosco */
+  background: rgba(5, 5, 5, 0.85);
+  backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08); /* Borda fina e discreta */
+  border-radius: 100px; /* Bordas totalmente arredondadas */
+  padding: 15px 50px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.8); /* Sombra para dar profundidade */
+}
+
+.nav-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 20px;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 50px; /* Espaço entre os links */
+}
+
+.nav-right a {
+  color: #ccc;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  transition: all 0.3s ease;
+  white-space: nowrap; /* Impede quebra de linha no texto */
+}
+
+.nav-right a:hover { color: #fff; }
+
+/* Linha dourada animada embaixo do link */
+.nav-right a::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0; /* Começa invisível (largura 0) */
+  height: 2px;
+  background-color: var(--accent);
+  transition: width 0.3s ease;
+}
+.nav-right a:hover::after { width: 100%; /* Enche a largura ao passar o mouse */ }
+
+/* Logo na Navbar */
+.logo-img {
+  height: 40px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 0 5px rgba(250, 185, 31, 0.3)); /* Brilho dourado na logo */
+  transition: transform 0.3s;
+}
+.logo-img:hover { transform: scale(1.05); }
+
+/* --- Responsividade da Navbar (Celular) --- */
+@media (max-width: 900px) {
+  .nav {
+    width: 90%;
+    min-width: auto;
+    max-width: none;
+    padding: 10px 20px;
+    top: 15px;
+  }
+  .nav-right { gap: 15px; width: auto; }
+  .nav-right a { font-size: 0.75rem; } /* Letra menor no celular */
+  .logo-img { height: 30px; }
+}
+
+/* ==========================================================================
+   4. UI ELEMENTS (Botões e Etiquetas)
+   ========================================================================== */
+.btn {
+  display: inline-block;
+  padding: 14px 32px;
+  border-radius: 50px;
+  background: var(--accent); /* Amarelo */
+  color: #000; /* Texto preto para contraste */
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  margin-right: 10px;
+  box-shadow: 0 0 20px rgba(250, 185, 31, 0.2); /* Brilho suave */
+  transform: translateY(0);
+  transition: all 0.3s ease;
+  border: 2px solid var(--accent);
+  cursor: pointer;
+}
+.btn:hover {
+  background: var(--accent-2); /* Muda pra laranja */
+  box-shadow: 0 0 40px rgba(250, 185, 31, 0.5); /* Brilho aumenta */
+  transform: translateY(-3px); /* Sobe um pouquinho */
+  border-color: var(--accent-2);
+}
+
+/* Botão Transparente (Ghost) */
+.btn.ghost {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  box-shadow: none;
+}
+.btn.ghost:hover {
+  border-color: #fff;
+  background: rgba(255,255,255,0.05);
+}
+
+/* Etiqueta "Status" no topo do Hero */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(250, 185, 31, 0.08);
+  border: 1px solid rgba(250, 185, 31, 0.2);
+  padding: 8px 18px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 30px;
+  width: fit-content;
+  backdrop-filter: blur(5px);
+}
+.status-pill .dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--accent);
+  animation: pulse-green 2s infinite; /* Pisca */
+}
+
+/* ==========================================================================
+   5. HERO SECTION (Topo do site)
+   ========================================================================== */
+.hero {
+  position: relative;
+  min-height: 95vh; /* Ocupa quase toda a altura da tela */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 55px 8vw 0px;
+  overflow: hidden; /* Corta o que passar do limite no desktop */
+}
+
+.hero-container {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr; /* Divide: Texto (1 parte) | Imagem (1.1 partes) */
+  align-items: center;
+  gap: 40px;
+  width: 100%;
+  max-width: 1300px;
+  z-index: 2;
+  position: relative;
+}
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+  padding-bottom: 60px;
+}
+
+.hero-text h1 {
+  font-size: 3.6rem; /* Título gigante */
+  margin: 0 0 25px 0;
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+/* Texto Gradiente (Dourado para Branco) */
+.text-gradient {
+  background: linear-gradient(90deg, #fff 20%, var(--accent) 100%);
+  -webkit-background-clip: text; /* Aplica o fundo apenas no texto */
+  background-clip: text;
+  color: transparent; /* Deixa o texto transparente para ver o fundo */
+}
+
+.hero-text p {
+  max-width: 500px;
+  color: #aaa;
+  font-size: 1.1rem;
+  margin: 0 0 35px 0;
+  line-height: 1.6;
+}
+
+.hero-cta { display: flex; gap: 15px; margin-bottom: 45px; }
+
+/* Estatísticas (Números pequenos abaixo dos botões) */
+.mini-stats {
+  display: flex;
+  gap: 40px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 25px;
+}
+.stat-item { display: flex; flex-direction: column; }
+.stat-item strong { font-size: 1.5rem; color: #fff; }
+.stat-item span { font-size: 0.85rem; color: var(--muted); text-transform: uppercase; margin-top: 4px; }
+
+/* --- ÁREA DA LOGO 3D --- */
+.hero-image-area {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 650px;
+  margin-left: -50px;
+}
+
+/* Aura brilhante atrás da logo */
+.vertex-glow {
+  position: absolute;
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(circle, rgba(253, 185, 49, 0.15) 0%, transparent 70%);
+  filter: blur(80px);
+  z-index: 0;
+  animation: pulse 4s infinite alternate;
+}
+
+/* Container que faz a logo flutuar */
+.logo-3d-container {
+  z-index: 2;
+  position: relative;
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Imagem da Logo */
+.hero-logo-img {
+  width: 100%;
+  max-width: 570px; /* Tamanho máximo da logo */
+  height: auto;
+  filter: drop-shadow(0 40px 60px rgba(0,0,0,0.6)); /* Sombra para dar profundidade */
+  transition: transform 0.3s ease;
+}
+.hero-logo-img:hover {
+  transform: scale(1.02) rotate(-1deg); /* Efeito ao passar o mouse */
+  filter: drop-shadow(0 50px 90px rgba(253, 185, 49, 0.4));
+}
+
+/* Badges flutuantes ao redor (Opcionais) */
+.floating-badge {
+  position: absolute;
+  background: rgba(10, 10, 10, 0.9);
+  backdrop-filter: blur(12px);
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+  z-index: 5;
+}
+.badge-top {
+  top: 20%; right: 10%; border-left: 3px solid var(--accent); animation: float 6s ease-in-out infinite;
+}
+.badge-bottom {
+  bottom: 25%; left: 5%; border-left: 3px solid #28a745; animation: float 7s ease-in-out infinite 1s;
+}
+
+/* ==========================================================================
+   6. TECH MARQUEE (Faixa de tecnologias que passa correndo)
+   ========================================================================== */
+.tech-marquee {
+  background: var(--card);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding: 20px 0;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  white-space: nowrap; /* Impede quebra de linha */
+  margin-bottom: 60px;
+  transform: rotate(-1deg); /* Leve inclinação para estilo */
+  margin-top: -110px; /* Sobe a faixa para cima do Hero */
+  z-index: 10;
+}
+.marquee-content {
+  display: inline-block;
+  animation: marquee 25s linear infinite; /* Roda para sempre */
+}
+.marquee-content span {
+  font-family: 'Fira Code', monospace;
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: rgba(255,255,255,0.2); /* Texto apagado */
+  margin: 0 30px;
+  transition: color 0.3s;
+}
+/* Ao passar o mouse, acende o texto */
+.tech-marquee:hover .marquee-content span {
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(250, 185, 31, 0.4);
+}
+
+/* ==========================================================================
+   7. SEÇÃO DE SERVIÇOS (BARALHO RETO COM SPOILER)
+   ========================================================================== */
+.services-bar {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 650px; /* Altura fixa necessária para o efeito de pilha */
+  padding: 0 5vw;
+  perspective: 1500px; /* Dá a sensação de 3D */
+  z-index: 2;
+}
+
+/* Estrutura do Card (Posicionamento Absoluto para empilhar) */
+.service-card {
+  position: absolute;
+  width: 100%;
+  max-width: 380px;
+  height: 500px;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); /* Movimento suave */
+  transform-style: preserve-3d;
+  cursor: pointer;
+  top: 50%;
+  left: 50%; /* Centraliza o card */
+}
+
+/* --- ESTADO INICIAL (PILHA COM "SPOILER" NAS LATERAIS) --- */
+
+/* Card da Esquerda (Backend) */
+.service-card:nth-child(1) {
+  z-index: 1;
+  /* Empurra 60px para a esquerda para aparecer a bordinha */
+  transform: translate(calc(-50% - 60px), -50%) scale(0.9);
+  opacity: 0.6;
+}
+
+/* Card do Centro (Mobile) - Fica na frente */
+.service-card:nth-child(2) {
+  z-index: 10;
+  transform: translate(-50%, -50%) scale(1); /* Tamanho original */
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+
+/* Card da Direita (Design) */
+.service-card:nth-child(3) {
+  z-index: 1;
+  /* Empurra 60px para a direita */
+  transform: translate(calc(-50% + 60px), -50%) scale(0.9);
+  opacity: 0.6;
+}
+
+/* --- ESTADO HOVER (ABRIR O BARALHO) --- */
+/* Quando o mouse entra na seção, as cartas se separam */
+
+.services-bar:hover .service-card:nth-child(1) {
+  transform: translate(-160%, -50%) scale(1); /* Vai longe pra esquerda */
+  opacity: 1;
+  z-index: 5;
+}
+
+.services-bar:hover .service-card:nth-child(2) {
+  transform: translate(-50%, -50%) scale(1.05); /* Cresce no centro */
+  z-index: 10;
+}
+
+.services-bar:hover .service-card:nth-child(3) {
+  transform: translate(60%, -50%) scale(1); /* Vai longe pra direita */
+  opacity: 1;
+  z-index: 5;
+}
+
+/* --- FOCAR UMA CARTA ESPECÍFICA --- */
+.service-card:hover {
+  z-index: 20 !important; /* Traz para frente de tudo */
+  opacity: 1 !important;
+}
+
+/* Quando foca, aumenta um pouquinho (Escala 1.1) */
+.services-bar:hover .service-card:nth-child(1):hover { transform: translate(-160%, -50%) scale(1.1); }
+.services-bar:hover .service-card:nth-child(2):hover { transform: translate(-50%, -50%) scale(1.1); }
+.services-bar:hover .service-card:nth-child(3):hover { transform: translate(60%, -50%) scale(1.1); }
+
+/* --- VISUAL INTERNO DOS CARDS --- */
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(20, 20, 20, 0.95) 0%, rgba(5, 5, 5, 1) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* Borda amarela ao passar o mouse */
+.service-card:hover .card-inner {
+  border-color: rgba(250, 185, 31, 0.4);
+}
+
+/* Código Fantasma (Texto que aparece flutuando no fundo) */
+.card-inner::before {
+  content: "";
+  position: absolute;
+  top: 30px; right: 25px;
+  text-align: right; font-family: 'Fira Code', monospace; font-size: 0.75rem;
+  color: var(--accent); opacity: 0; white-space: pre; pointer-events: none;
+  transition: all 0.5s ease; z-index: 1; transform: translateY(10px);
+}
+/* Textos específicos para cada card */
+.backend-card .card-inner::before { content: "@app.route('/api')\A def secure_data():\A   if not auth:\A     abort(403)\A   return true"; }
+.mobile-card .card-inner::before { content: "{\A   'status': 200,\A   'sync': true,\A   'device': 'ios',\A   'data': [ ... ]\A }"; }
+.design-card .card-inner::before { content: ".ui-interface {\A   display: grid;\A   opacity: 1;\A   color: #fab91f;\A   anim: fade;\A }"; }
+
+/* Aparece o código no hover */
+.service-card:hover .card-inner::before { opacity: 0.3; transform: translateY(0); }
+
+/* Luz de fundo (Glow) */
+.card-glow {
+  position: absolute; top: -20%; left: 50%; transform: translateX(-50%);
+  width: 200px; height: 200px; background: var(--accent);
+  filter: blur(80px); opacity: 0; transition: opacity 0.6s ease;
+  z-index: 0; border-radius: 50%;
+}
+.service-card:hover .card-glow { opacity: 0.2; top: -10%; }
+
+/* Ícones SVG */
+.icon-box svg { transition: 0.5s; color: #fff; width: 60px; height: 60px; }
+/* Cores dos ícones no hover */
+.backend-card:hover .icon-box svg { color: var(--accent); transform: scale(1.15); filter: drop-shadow(0 0 15px rgba(250, 185, 31, 0.5)); }
+.mobile-card:hover .icon-box svg { color: #4cc9f0; transform: translateY(-8px) rotate(-3deg); }
+.design-card:hover .icon-box svg { color: #ff5e00; transform: rotate(15deg) scale(1.1); }
+
+.card-content h3 { font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 15px; }
+.card-content p { color: #aaa; line-height: 1.6; }
+.card-footer span { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--accent); text-transform: uppercase; font-weight: 600; opacity: 0.8; }
+
+/* --- AJUSTE MOBILE DO BARALHO (Desativa efeito 3D) --- */
+@media (max-width: 1024px) {
+  .services-bar {
+    height: auto;
+    flex-direction: column; /* Um embaixo do outro */
+    padding: 60px 5vw;
+    gap: 40px;
+  }
+  .service-card {
+    position: relative; /* Remove absoluto */
+    top: auto; left: auto;
+    transform: none !important; /* Remove rotações/deslocamentos */
+    opacity: 1 !important;
+    max-width: 100%;
+    margin-bottom: 20px;
+  }
+  /* Remove efeitos de hover complexos */
+  .services-bar:hover .service-card:nth-child(1),
+  .services-bar:hover .service-card:nth-child(2),
+  .services-bar:hover .service-card:nth-child(3) {
+    transform: none;
+  }
+  .service-card:hover { transform: translateY(-5px) !important; }
+}
+
+/* ==========================================================================
+   8. SEÇÃO DE PROJETOS (ATUALIZADA: CARROSSEL / SLIDER)
+   ========================================================================== */
+.projects {
+  padding: 0 8vw 60px;
+  position: relative;
+  overflow: hidden; /* Garante que nada vaze da tela */
+}
+
+/* Cabeçalho com Título e Setas alinhados */
+.projects-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end; /* Alinha setas com a base do texto */
+  margin-bottom: 30px;
+  margin-top: 60px;
+  padding-right: 10px;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  color: #fff;
+  font-weight: 700;
+  margin: 0; /* Remove margens antigas para alinhar com flex */
+}
+
+/* Container que esconde a barra de rolagem mas permite scroll */
+.slider-container {
+  width: 100%;
+  overflow-x: auto; /* Permite rolar para os lados */
+  scroll-behavior: smooth; /* Rolagem suave nativa */
+  -ms-overflow-style: none;  /* Esconde scrollbar (IE/Edge) */
+  scrollbar-width: none;  /* Esconde scrollbar (Firefox) */
+  padding: 20px 5px; /* Espaço para a sombra não ser cortada */
+}
+
+/* Esconde scrollbar (Chrome/Safari) */
+.slider-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* A "trilha" onde os cards ficam lado a lado */
+.slider-track {
+  display: flex; /* Coloca um ao lado do outro */
+  gap: 25px; /* Espaço entre os cards */
+  width: max-content; /* Força a largura ser a soma dos cards */
+}
+
+/* Card Adaptado para Slider */
+.slider-card {
+  min-width: 320px; /* Largura fixa para cada card */
+  max-width: 320px;
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  flex-shrink: 0; /* Garante que o card não encolha */
+}
+
+.slider-card:hover {
+  transform: translateY(-5px); /* Sobe um pouco */
+  border-color: var(--accent); /* Borda amarela */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.card-thumb {
+  height: 160px;
+  background-size: cover;
+  background-position: center;
+  filter: grayscale(100%); /* Preto e branco */
+  opacity: 0.8;
+  transition: all 0.4s ease;
+}
+
+.slider-card:hover .card-thumb {
+  filter: grayscale(0%); /* Fica colorido no hover */
+  opacity: 1;
+}
+
+.card-body { padding: 15px 20px; }
+.card-body h3 { margin: 0 0 5px; font-size: 1.1rem; color: #fff; }
+.muted { color: #666; font-size: 0.75rem; text-transform: uppercase; font-weight: 600; }
+
+/* Botões de Navegação (Setas) */
+.slider-nav {
+  display: flex;
+  gap: 10px;
+}
+
+.nav-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%; /* Botão redondo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+  transform: scale(1.1);
+}
+
+/* Mobile: Ajuste para cartões menores */
+@media (max-width: 768px) {
+  .slider-card {
+    min-width: 280px;
+    max-width: 280px;
+  }
+  .projects-header {
+    flex-direction: column; /* Título em cima, setas embaixo */
+    align-items: flex-start;
+    gap: 15px;
+  }
+}
+
+/* ==========================================================================
+   12. SEÇÃO ESTRATÉGICA (Accordion com Efeito 3D)
+   ========================================================================== */
+.benefits-section {
+  padding: 100px 5vw;
+  position: relative;
+  overflow: hidden;
+  perspective: 300px; /* Necessário para efeito 3D */
+}
+
+/* Grafismo de fundo (bola sutil) */
+.benefits-bg-graphic {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%; height: 120%;
+  background: radial-gradient(circle at center, rgba(250, 185, 31, 0.03) 0%, transparent 60%);
+  pointer-events: none; z-index: 0; opacity: 0.5;
+}
+
+.benefits-header { text-align: center; margin-bottom: 70px; position: relative; z-index: 2; }
+
+/* Container dos Paineis */
+.strategy-accordion {
+  display: flex; width: 100%; height: 450px;
+  max-width: 1200px; margin: 0 auto; gap: 15px;
+  position: relative; z-index: 2; transform-style: preserve-3d;
+}
+
+/* Animação de entrada dos cards */
+@keyframes cardEntrance {
+  0% { opacity: 0; transform: translateX(-100px) translateZ(-200px) rotateY(30deg); }
+  100% { opacity: 1; transform: translateX(0) translateZ(0) rotateY(0deg); }
+}
+
+/* Fundo que gira sozinho (Pião) */
+@keyframes spinBackground {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Painel Individual */
+.strategy-panel {
+  position: relative; flex: 1; /* Todos começam com tamanho igual */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px; overflow: hidden; cursor: pointer;
+  display: flex; align-items: flex-end; padding: 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  opacity: 0; animation: cardEntrance 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  transition: flex 0.6s ease; /* Animação suave ao abrir */
+}
+
+/* Delays para animação de entrada (um depois do outro) */
+.strategy-panel:nth-child(1) { animation-delay: 0.2s; }
+.strategy-panel:nth-child(2) { animation-delay: 0.4s; }
+.strategy-panel:nth-child(3) { animation-delay: 0.6s; }
+.strategy-panel:nth-child(4) { animation-delay: 0.8s; }
+
+/* Imagens de Fundo */
+.strategy-panel::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 100%; height: 90%; z-index: 0;
+  background-size: cover; background-position: center; background-repeat: repeat-x;
+  filter: grayscale(100%) brightness(0.5); /* Escuro e P&B */
+  animation: spinBackground 30s linear infinite; /* Gira para sempre */
+  transition: filter 0.5s ease;
+}
+
+.panel-authority::before { background-image: url('../images/podcast.png'); }
+.panel-management::before { background-image: url('../images/gestao.png'); }
+.panel-ai::before { background-image: url('../images/imagemia.gif'); }
+.panel-speed::before { background-image: url('../images/agilidade.png'); }
+
+/* Ao passar o mouse no container, os outros diminuem */
+.strategy-accordion:hover .strategy-panel:not(:hover) { opacity: 0.5; transform: scale(0.95); }
+
+/* Ao passar o mouse no painel, ele abre (flex: 3.5) */
+.strategy-panel:hover {
+  flex: 3.5; border-color: rgba(250, 185, 31, 0.8);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.8); transform: scale(1.02);
+}
+.strategy-panel:hover::before { filter: grayscale(0%) brightness(1); } /* Fica colorido */
+
+/* Conteúdo interno do painel */
+.panel-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.2) 70%); /* Sombra preta embaixo */
+  z-index: 1; pointer-events: none;
+}
+.panel-content { position: relative; z-index: 2; width: 100%; transform: translateY(20px); transition: all 0.6s ease; }
+.strategy-panel:hover .panel-content { transform: translateY(0); }
+
+/* Texto que aparece no hover */
+.strategy-panel p {
+  opacity: 0; max-height: 0; overflow: hidden;
+  transition: all 0.6s ease;
+}
+.strategy-panel:hover p { opacity: 1; max-height: 200px; margin-top: 10px; }
+
+/* Mobile: Paineis ficam um embaixo do outro */
+@media (max-width: 900px) {
+  .strategy-accordion { flex-direction: column; height: auto; gap: 20px; }
+  .strategy-panel {
+    width: 100%; flex: 1 !important; height: 250px;
+    align-items: flex-end; opacity: 1; animation: none; transform: none;
+  }
+  .strategy-panel p { opacity: 1; max-height: none; margin-top: 10px; } /* Texto sempre visível */
+}
+
+/* =========================================
+   IA MODAL (Janela do Chatbot)
+   ========================================= */
+.btn-ai-demo {
+  margin-top: 15px;
+  background: rgba(250, 185, 31, 0.2);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 8px 16px; border-radius: 20px;
+  font-size: 0.85rem; font-weight: 600; cursor: pointer;
+  transition: all 0.3s ease; backdrop-filter: blur(4px);
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.btn-ai-demo:hover {
+  background: var(--accent); color: #000;
+  transform: translateY(-2px);
+}
+
+/* Fundo escuro atrás do modal */
+.ai-modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);
+  z-index: 2000; display: none; justify-content: center; align-items: center;
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.ai-modal-overlay.active { display: flex; opacity: 1; }
+
+/* Caixa do Chat */
+.ai-modal-content {
+  background: #111; border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 90%; max-width: 500px; border-radius: 16px; padding: 25px;
+  position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+  transform: scale(0.9); transition: transform 0.3s ease;
+}
+.ai-modal-overlay.active .ai-modal-content { transform: scale(1); }
+
+.ai-modal-close {
+  position: absolute; top: 15px; right: 20px;
+  background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;
+}
+
+.ai-chat-box {
+  height: 300px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.05);
+  background: rgba(0,0,0,0.3); border-radius: 8px; padding: 15px;
+  margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px;
+}
+/* Balões de mensagem */
+.ai-message { padding: 10px 14px; border-radius: 12px; font-size: 0.95rem; max-width: 80%; line-height: 1.5; }
+.ai-message-bot { background: rgba(255,255,255,0.1); align-self: flex-start; color: #ddd; }
+.ai-message-user { background: var(--accent); color: #000; align-self: flex-end; font-weight: 500; }
+
+.ai-input-area input { flex: 1; background: #222; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; outline: none; }
+.model-select {
+  background: #222; color: #fff; border: 1px solid var(--accent); padding: 8px;
+  border-radius: 8px; width: 100%; margin-bottom: 15px; cursor: pointer;
+}
+
+/* ==========================================================================
+   SEÇÃO SOBRE (A EMPRESA)
+   ========================================================================== */
+.about-section { padding: 100px 8vw; position: relative; z-index: 2; }
+.about-container { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; max-width: 1400px; margin: 0 auto; }
+.about-content h2 { font-size: 2.8rem; margin-bottom: 30px; line-height: 1.1; }
+.about-text { font-size: 1.05rem; color: #ccc; line-height: 1.8; margin-bottom: 25px; max-width: 550px; }
+.about-signature { margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+.code-font { font-family: 'Fira Code', monospace; color: var(--accent); font-size: 0.9rem; }
+
+/* Card de Vidro com código JSON */
+.glass-card-profile {
+  background: rgba(15, 15, 15, 0.6); backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 30px;
+  position: relative; transform: perspective(1000px) rotateY(-5deg); transition: all 0.5s ease;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+.glass-card-profile:hover {
+  transform: perspective(1000px) rotateY(0deg) translateY(-10px); /* Fica reto no hover */
+  border-color: rgba(250, 185, 31, 0.3);
+}
+
+/* Bolinhas estilo Mac */
+.window-dots { display: flex; gap: 6px; }
+.window-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.window-dots span:nth-child(1) { background: #ff5f56; }
+.window-dots span:nth-child(2) { background: #ffbd2e; }
+.window-dots span:nth-child(3) { background: #27c93f; }
+
+/* Linhas do JSON */
+.stat-row { display: flex; justify-content: space-between; font-family: 'Fira Code', monospace; margin-bottom: 12px; font-size: 0.95rem; }
+.key { color: #888; }
+.value.string { color: #a5d6ff; }
+.value.number { color: var(--accent); }
+
+/* Tags de skills */
+.skill-tag {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+  padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; color: #ccc; transition: all 0.3s;
+}
+.skill-tag:hover {
+  background: rgba(250, 185, 31, 0.1); border-color: var(--accent);
+  color: var(--accent); transform: translateY(-2px);
+}
+
+@media (max-width: 900px) {
+  .about-container { grid-template-columns: 1fr; gap: 40px; } /* Vira coluna no mobile */
+  .glass-card-profile { transform: none; }
+}
+
+/* ==========================================================================
+   9. CONTATO & FOOTER
+   ========================================================================== */
+.contact {
+  padding: 100px 8vw 20px; display: flex; flex-direction: column;
+  align-items: flex-start; text-align: left;
+}
+.contact .section-title { text-align: left; margin: 0 0 20px 0; width: 100%; }
+.contact-form input, .contact-form textarea {
+  background: #0f0f0f; border: 1px solid rgba(255,255,255,0.1); padding: 15px;
+  border-radius: 8px; color: #eee; font-family: inherit;
+}
+
+.footer {
+  padding: 60px 8vw 40px; border-top: 1px solid rgba(255,255,255,0.05);
+  background: #000; text-align: center;
+}
+.footer-content { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.social-links { display: flex; gap: 25px; margin-bottom: 10px; }
+.social-links a {
+  color: #666; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;
+  padding: 10px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.02);
+}
+.social-links a:hover {
+  color: var(--accent); border-color: var(--accent); background: rgba(250, 185, 31, 0.1);
+  transform: translateY(-3px);
+}
+
+/* ==========================================================================
+   10. EXTRAS (CODE RAIN - CHUVA DE CÓDIGO)
+   ========================================================================== */
+#code-background-container {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  overflow: hidden; z-index: -10; pointer-events: none;
+}
+.floating-code-snippet {
+  position: absolute; font-family: 'Fira Code', 'Courier New', monospace; font-weight: 700;
+  white-space: nowrap; user-select: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(250, 185, 31, 0.15) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation-name: floatUp; animation-timing-function: linear; animation-iteration-count: infinite; opacity: 0;
+}
+@keyframes floatUp {
+  0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+  100% { transform: translateY(-10vh) rotate(5deg); opacity: 0; }
+}
+
+/* Classes para animação de scroll (Reveal) */
+.reveal { opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+.reveal.active { opacity: 1; transform: translateY(0); }
+.reveal-left { opacity: 0; transform: translateX(-50px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+.reveal-left.active { opacity: 1; transform: translateX(0); }
+.delay-200 { transition-delay: 0.2s; }
+
+/* ==========================================================================
+   CORREÇÃO FINAL DE RESPONSIVIDADE (MOBILE)
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  /* HERO: Ajustes para não cortar o conteúdo no celular */
+  .hero {
+    padding: 120px 5vw 40px;
+    min-height: auto; height: auto;
+    align-items: flex-start;
+    overflow: visible; /* IMPORTANTE: Deixa o conteúdo vazar para baixo sem cortar */
+  }
+
+  .hero-container {
+    display: flex; flex-direction: column; gap: 40px; text-align: center;
+  }
+
+  /* Imagem vai para cima no mobile */
+  .hero-image-area {
+    order: 1; width: 100%; height: auto; margin: 0;
+    display: flex; justify-content: center; margin-top: 60px;
+  }
+  .hero-logo-img { max-width: 280px; height: auto; }
+  .vertex-glow { width: 280px; height: 280px; }
+
+  /* Texto vai para baixo */
+  .hero-text { order: 2; padding-bottom: 0; align-items: center; }
+  .hero-text h1 { font-size: 2.2rem; margin-bottom: 20px; }
+
+  /* Botões empilhados */
+  .hero-cta { flex-direction: column; width: 100%; gap: 15px; }
+  .btn { width: 100%; margin-right: 0; text-align: center; }
+
+  /* Ajuste do Marquee para não vazar a tela */
+  .tech-marquee {
+    width: 100vw;
+    margin-left: -5vw;
+    margin-top: 40px;
+    transform: rotate(-1deg) scale(1.02);
+  }
+}
